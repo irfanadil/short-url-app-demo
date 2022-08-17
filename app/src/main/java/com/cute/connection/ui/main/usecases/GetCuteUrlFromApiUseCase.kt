@@ -9,6 +9,7 @@ import javax.inject.Inject
 
 class GetCuteUrlFromApiUseCase @Inject constructor(
     private val repo: ShortenUrlRepo
+
 ) {
     suspend fun execute(potentialUrl: String): GenericApiResponse<NewShortenUrlResponse> {
         return if (Patterns.WEB_URL.matcher(potentialUrl).matches())

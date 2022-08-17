@@ -72,8 +72,16 @@ class CuteUrlListFragment : Fragment() , AdapterClickListener {
     private fun observeResponse(){
         viewModel.shortUrlResponse.observe(viewLifecycleOwner) { shortUrlResponse ->
             when (shortUrlResponse) {
+
                 is GenericApiResponse.Failure -> {
-                    shortUrlResponse.message?.let { requireContext().showToast(it) }
+                    shortUrlResponse.message?.let { requireContext().showToast("error = $it") }
+                }
+                is GenericApiResponse.Success ->{
+                    requireContext().showToast("Success block")
+                    if(shortUrlResponse.value.urlResultEntity == null)
+                        shortUrlResponse.value.responseErrors.errorMessage?.let {
+                            requireContext().showToast(it)
+                        }
                 }
                 else -> {}
             }

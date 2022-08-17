@@ -13,8 +13,8 @@ data class NewShortenUrlResponse(
 
 
 data class ResponseErrors(
-    val errorCode: String,
-    val errorMessage: String
+    val errorCode: String?,
+    val errorMessage: String?
 )
 
 @Entity(tableName = "urlHistoryTable" , indices = [Index(value = ["originalUrl"], unique = true)])
@@ -29,3 +29,7 @@ data class UrlResultEntity(
     @PrimaryKey(autoGenerate = true)
     var autoId:Int = 0
 )
+
+
+// https://urlo.in/docs/
+data class UrlRawData (val originalUrl:String)
