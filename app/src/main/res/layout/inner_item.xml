@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/url_item_container_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
+            android:id="@+id/long_url_textview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="23dp"
+            android:layout_marginEnd="12dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="TextView"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:textColor="@color/grayish_violet"
+            android:textSize="17sp"
+            app:layout_constraintEnd_toStartOf="@+id/delete_btn"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="23dp"
+            app:layout_constraintBottom_toBottomOf="@+id/long_url_textview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/long_url_textview"
+            app:srcCompat="@drawable/ic_del" />
+
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="413dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/light_gray"
+            android:backgroundTint="@color/light_gray"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/long_url_textview" />
+
+
+        <TextView
+            android:id="@+id/cute_url_textview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="23dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="TextView"
+            android:maxLines="1"
+
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:textAlignment="gravity"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:foregroundGravity="center_horizontal"
+            android:textColor="@color/cyan"
+            android:textSize="17sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/copy_btn"
+            android:layout_width="0dp"
+            android:layout_height="39dp"
+
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/button_bg"
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/copy"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/cute_url_textview"
+            app:layout_constraintStart_toStartOf="@+id/cute_url_textview"
+            app:layout_constraintTop_toBottomOf="@+id/cute_url_textview" />
+
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/copied_btn"
+            android:layout_width="0dp"
+            android:layout_height="39dp"
+
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/button_bg"
+            android:backgroundTint="@color/violet"
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/copied"
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/cute_url_textview"
+            app:layout_constraintStart_toStartOf="@+id/cute_url_textview"
+            app:layout_constraintTop_toBottomOf="@+id/cute_url_textview" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

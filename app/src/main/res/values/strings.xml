@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">CuteLinkApp</string>
+    <string name="lets_get_started">Let\'s get started!</string>
+    <string name="paste_your_first">Paste your first link into\nthe field to shorten it</string>
+    <string name="shorten_a_link_here">Shorten a link here …</string>
+    <string name="shorten_it">SHORTEN IT!</string>
+    <string name="copy">COPY</string>
+    <string name="copied">COPIED!</string>
+    <string name="fragment_main_label">Main Fragment</string>
+    <string name="fragment_url_list">List Fragment</string>
+    <string name="your_link_history">Your Link History</string>
+</resources>

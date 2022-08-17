@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@+id/promo_fragment">
+
+    <fragment
+        android:id="@+id/promo_fragment"
+        android:name="com.cute.connection.ui.main.screens.promo.PromoFragment"
+        android:label="@string/fragment_main_label"
+        tools:layout="@layout/fragment_promo">
+
+        <action
+            android:id="@+id/action_main_fragment_to_url_listing_fragment"
+            app:destination="@id/url_listing_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/url_listing_fragment"
+        android:name="com.cute.connection.ui.main.screens.listing.CuteUrlListFragment"
+        android:label="@string/fragment_url_list"
+        tools:layout="@layout/fragment_listing">
+      <!--
+
+        <argument
+            android:name="flowStepNumber"
+            android:defaultValue="1"
+            app:argType="integer" />
+
+
+        <action
+            android:id="@+id/forgot_password_to_login_screen"
+            app:destination="@id/back_to_login_id"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/signup_nav_host_fragment"
+            app:popUpToInclusive="true" />
+
+            -->
+
+        <action
+            android:id="@+id/action_url_listing_fragment_to_main_fragment"
+            app:destination="@id/promo_fragment" />
+
+
+    </fragment>
+
+
+
+
+
+</navigation>
