@@ -1,18 +1,12 @@
 package com.cute.connection.ui.main.usecases
 
-import androidx.lifecycle.LiveData
-import com.cute.connection.persistance.ShortenUrlDao
-import com.cute.connection.ui.main.model.UrlResultEntity
+import com.cute.connection.ui.main.repo.ShortenUrlRepo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
-class GetAllStoredUrlUseCase @Inject constructor(
-    private val shortUrlDao: ShortenUrlDao
-) {
+class GetAllStoredUrlUseCase @Inject constructor(private val repo: ShortenUrlRepo) {
 
-    fun execute(): LiveData<List<UrlResultEntity>> {
-         return shortUrlDao.getAllStoredUrl()
-    }
-
-
+    fun invoke() = repo.getAllStoredUrl().distinctUntilChanged().flowOn(Dispatchers.IO)
 
 }

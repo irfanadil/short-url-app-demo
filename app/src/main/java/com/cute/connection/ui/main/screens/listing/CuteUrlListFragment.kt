@@ -5,80 +5,72 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ProgressBar
 import androidx.activity.addCallback
-import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.cute.connection.R
 import com.cute.connection.api.GenericApiResponse
+import com.cute.connection.api.UrlViewState
+import com.cute.connection.databinding.FragmentListingBinding
+import com.cute.connection.extensions.hide
 import com.cute.connection.extensions.hideKeyboard
+import com.cute.connection.extensions.show
 import com.cute.connection.extensions.showToast
 import com.cute.connection.ui.main.MainViewModel
 import com.cute.connection.ui.main.model.UrlResultEntity
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CuteUrlListFragment : Fragment() , AdapterClickListener {
+class CuteUrlListFragment : Fragment(), AdapterClickListener {
 
     private val viewModel: MainViewModel by activityViewModels()
 
-    private  var loadingAnimator: ProgressBar? = null
-    private lateinit var historyRecycler: RecyclerView
-    private lateinit var longUrlEditText:EditText
-    private var urlEntityList: ArrayList<UrlResultEntity> = ArrayList()
     private lateinit var cuteUrlAdapter: CuteUrlAdapter
-    private val linearLayoutManager = LinearLayoutManager(activity , LinearLayoutManager.VERTICAL, false)
+    private val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+
+    private lateinit var _binding: FragmentListingBinding
+    private val binding get() = _binding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Logger.e("hello")
-        val view = inflater.inflate(R.layout.fragment_listing, container, false)
-        longUrlEditText = view.findViewById(R.id.long_url_edit_text)
+        _binding = FragmentListingBinding.inflate(inflater, container, false)
         requireActivity().onBackPressedDispatcher.addCallback {
             findNavController().popBackStack()
         }
-        view.findViewById<AppCompatButton>(R.id.copy_btn).setOnClickListener{
+        binding.copyBtn.setOnClickListener {
             callApiToShortenUrl()
         }
-        //viewModel.getAllStoredUrl()
+        setupUI()
         observeResponse()
-        loadingAnimator = view.findViewById(R.id.loading_animator)
-        historyRecycler = view.findViewById(R.id.history_recycler)
+        return binding.root
+    }
 
-        cuteUrlAdapter = CuteUrlAdapter(urlEntityList, this@CuteUrlListFragment)
-        historyRecycler.apply {
+    private fun setupUI() {
+        binding.historyRecycler.apply {
             this.layoutManager = linearLayoutManager
             this.setHasFixedSize(true)
-            cuteUrlAdapter = CuteUrlAdapter(urlEntityList, this@CuteUrlListFragment)
+            cuteUrlAdapter = CuteUrlAdapter(this@CuteUrlListFragment)
             this.adapter = cuteUrlAdapter
         }
-
-        return view
     }
 
-
-    private fun callApiToShortenUrl(){
-        hideKeyboard()
-        viewModel.getShortUrl(longUrlEditText.text.toString())
-    }
-
-    private fun observeResponse(){
+    private fun observeResponse() {
+        // Using LiveData to get remote shorten url data....
         viewModel.shortUrlResponse.observe(viewLifecycleOwner) { shortUrlResponse ->
+            binding.progress.hide()
             when (shortUrlResponse) {
-
                 is GenericApiResponse.Failure -> {
                     shortUrlResponse.message?.let { requireContext().showToast("error = $it") }
                 }
-                is GenericApiResponse.Success ->{
+                is GenericApiResponse.Success -> {
                     requireContext().showToast("Success block")
-                    if(shortUrlResponse.value.urlResultEntity == null)
+                    if (shortUrlResponse.value.urlResultEntity == null)
                         shortUrlResponse.value.responseErrors.errorMessage?.let {
                             requireContext().showToast(it)
                         }
@@ -87,25 +79,55 @@ class CuteUrlListFragment : Fragment() , AdapterClickListener {
             }
         }
 
-        viewModel.urlEntities.observe(viewLifecycleOwner) { liveUrlEntities ->
-            urlEntityList.clear()
-            urlEntityList.addAll( liveUrlEntities)
+        // Using Flow to receive the data from the room data...
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect() { uiState ->
+                    when (uiState) {
+                        is UrlViewState.Loading -> binding.progress.show()
+                        is UrlViewState.Success -> {
+                            binding.progress.hide()
+                            onUrlLoaded(uiState.urls)
+                        }
+                        is UrlViewState.Error -> {
+                            binding.progress.hide()
+                            requireActivity().showToast("Error...")
+                        }
+                        is UrlViewState.Empty -> {
+                            binding.progress.hide()
+                            showEmptyState()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun callApiToShortenUrl() {
+        hideKeyboard()
+        binding.progress.show()
+        viewModel.getShortUrl(binding.longUrlEditText.text.toString()) // Method-1  Using LiveData....
+    }
+
+    private fun showEmptyState() {
+        cuteUrlAdapter.differ.submitList(emptyList())
+    }
+
+    private fun onUrlLoaded(notes: List<UrlResultEntity>) {
+        cuteUrlAdapter.differ.submitList(notes)
+    }
+
+    override fun copyUrlEvent(position: Int) {
+        for (holder in cuteUrlAdapter.differ.currentList)
+            holder.recycleItemState = false
+        cuteUrlAdapter.differ.currentList[position].recycleItemState = true
+        binding.historyRecycler.post {
             cuteUrlAdapter.notifyDataSetChanged()
         }
     }
 
-    
-
-    override fun triggerCopyUrlClickEvent(position: Int) {
-        //for(item in urlEntityList)
-           // item.recycleItemState = true
-        //urlEntityList[position].recycleItemState = false
-
-    }
-
-    override fun triggerDeleteUrlClickEvent(position: Int) {
-        Logger.e("Delete event triggered "+urlEntityList[position].autoId)
-        viewModel.deleteStoredUrlById(urlEntityList[position].autoId)
+    override fun deleteUrlEvent(position: Int) {
+        viewModel.deleteStoredUrlById(cuteUrlAdapter.differ.currentList[position].autoId)
     }
 
 }

@@ -1,28 +1,28 @@
 package com.cute.connection.ui.main.screens.listing
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.cute.connection.R
-import com.cute.connection.extensions.gone
+import com.cute.connection.extensions.hide
+import com.cute.connection.extensions.show
 import com.cute.connection.ui.main.model.UrlResultEntity
-import com.orhanobut.logger.Logger
 
 class CuteUrlAdapter
 internal constructor(
-    passedUrlList: ArrayList<UrlResultEntity>, onAdapterClickListener: AdapterClickListener
+    onAdapterClickListener: AdapterClickListener
 ) : RecyclerView.Adapter<CuteUrlAdapter.HistoryItemViewHolder>() {
 
-
-    private var urlList = ArrayList<UrlResultEntity>()
     private var classScopedItemClickListener: AdapterClickListener = onAdapterClickListener
 
     init {
-        this.urlList = passedUrlList
         this.classScopedItemClickListener = onAdapterClickListener
     }
 
@@ -36,29 +36,32 @@ internal constructor(
 
     override fun onBindViewHolder(holder: HistoryItemViewHolder, position: Int) {
 
-        val urlItem = urlList[position]
+        val urlItem = differ.currentList[position]
         holder.longUrlTextView.text = urlItem.originalUrl
         holder.cuteUrlTextView.text = urlItem.shortUrl
 
         holder.copyBtn.setOnClickListener {
-            holder.copyBtn.visibility = View.INVISIBLE
-            holder.copiedBtn.visibility = View.VISIBLE
-            urlItem.recycleItemState = true
-            classScopedItemClickListener.triggerCopyUrlClickEvent(position)
+            classScopedItemClickListener.copyUrlEvent(position)
         }
 
         holder.deleteBtn.setOnClickListener {
-            classScopedItemClickListener.triggerDeleteUrlClickEvent(position)
+            classScopedItemClickListener.deleteUrlEvent(position)
         }
 
-        if(urlItem.recycleItemState){
-            holder.copyBtn.performClick()
+        if (urlItem.recycleItemState) {
+            holder.copyBtn.hide()
+            holder.copiedBtn.show()
+        } else {
+            holder.copyBtn.show()
+            holder.copiedBtn.hide()
         }
-
 
     }
 
-    override fun getItemCount(): Int = urlList.size
+    override fun getItemCount(): Int {
+        return differ.currentList.size
+    }
+
 
     inner class HistoryItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
@@ -79,6 +82,22 @@ internal constructor(
     override fun getItemId(position: Int): Long {
         return position.toLong()
     }
+
+    private val differCallback = object : DiffUtil.ItemCallback<UrlResultEntity>() {
+        override fun areItemsTheSame(oldItem: UrlResultEntity, newItem: UrlResultEntity): Boolean {
+            return oldItem.autoId == newItem.autoId
+        }
+
+        @SuppressLint("DiffUtilEquals")
+        override fun areContentsTheSame(
+            oldItem: UrlResultEntity,
+            newItem: UrlResultEntity
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val differ = AsyncListDiffer(this, differCallback)
 
 
 }

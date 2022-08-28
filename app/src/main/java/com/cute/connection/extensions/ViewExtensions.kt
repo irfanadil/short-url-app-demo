@@ -28,3 +28,14 @@ fun View.gone(shouldBeGone: Boolean) {
   if (shouldBeGone) visibility = View.GONE
   else visible()
 }
+
+
+fun View.show() {
+  visibility = View.VISIBLE
+}
+
+fun View.hide() {
+  visibility = View.GONE
+}
+
+fun View.showOrHide(isVisible: Boolean) = if (isVisible) show() else hide()

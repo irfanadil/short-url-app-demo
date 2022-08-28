@@ -1,5 +1,7 @@
 package com.cute.connection.api
 
+import com.cute.connection.ui.main.model.UrlResultEntity
+
 
 sealed class GenericApiResponse<out T> {
 
@@ -21,6 +23,14 @@ enum class FailureStatus {
     API_FAIL,
     NO_INTERNET,
     OTHER
+}
+
+
+sealed class UrlViewState {
+    object Empty : UrlViewState()
+    object Loading : UrlViewState()
+    data class Success(val urls: List<UrlResultEntity>) : UrlViewState()
+    data class Error(val exception: Throwable) : UrlViewState()
 }
 
 

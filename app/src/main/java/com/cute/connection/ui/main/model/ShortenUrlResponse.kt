@@ -5,12 +5,10 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-
-data class NewShortenUrlResponse(
+data class ShortenUrlResponse(
     @SerializedName("data") val urlResultEntity: UrlResultEntity?,
     @SerializedName("errors") val responseErrors: ResponseErrors
 )
-
 
 data class ResponseErrors(
     val errorCode: String?,
@@ -26,6 +24,7 @@ data class UrlResultEntity(
     val title: String?,
     val totalClicks: Int,
     val updatedAt: String,
+
     @PrimaryKey(autoGenerate = true)
     var autoId:Int = 0
 )

@@ -10,12 +10,10 @@ class CuteUrlApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        //Logger.addLogAdapter(AndroidLogAdapter())
         Logger.addLogAdapter(object : AndroidLogAdapter() {
             override fun isLoggable(priority: Int, tag: String?): Boolean {
                 return BuildConfig.DEBUG
             }
         })
     }
-
 }
