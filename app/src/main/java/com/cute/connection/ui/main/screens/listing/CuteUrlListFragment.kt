@@ -61,7 +61,7 @@ class CuteUrlListFragment : Fragment(), AdapterClickListener {
     }
 
     private fun observeResponse() {
-        // Using LiveData to get remote shorten url data....
+        // Using SingleLiveEvent to observe when short url is returned by remote api....
         viewModel.shortUrlResponse.observe(viewLifecycleOwner) { shortUrlResponse ->
             binding.progress.hide()
             when (shortUrlResponse) {
@@ -79,7 +79,7 @@ class CuteUrlListFragment : Fragment(), AdapterClickListener {
             }
         }
 
-        // Using Flow to receive the data from the room data...
+        // Using Flow to receive the data from the Room data...
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect() { uiState ->
@@ -124,6 +124,7 @@ class CuteUrlListFragment : Fragment(), AdapterClickListener {
         binding.historyRecycler.post {
             cuteUrlAdapter.notifyDataSetChanged()
         }
+        viewModel.updateUrlRecordById(cuteUrlAdapter.differ.currentList[position].autoId)
     }
 
     override fun deleteUrlEvent(position: Int) {

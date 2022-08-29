@@ -16,9 +16,16 @@ interface ShortenUrlDao {
     @Query("SELECT * FROM urlHistoryTable")
     fun getAllStoredUrl(): Flow<List<UrlResultEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    // By ignoring, you can also avoid data refresh as fun getAllStoredUrl() using Flow and it will update ui if record changes...
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertUrl(urlResponseEntity: UrlResultEntity)
 
     @Query("DELETE FROM urlHistoryTable WHERE autoId=:id")
     suspend fun deleteStoredUrl(id: Int)
+
+    @Query("UPDATE urlHistoryTable set recycleItemState=1 WHERE autoId=:id")
+    suspend fun updateClickUrlToCopiedState(id: Int)
+
+    @Query("UPDATE urlHistoryTable set recycleItemState=0 WHERE recycleItemState=1")
+    suspend fun resetSelectUrlToInitialState()
 }

@@ -7,6 +7,6 @@ import javax.inject.Inject
 
 class GetAllStoredUrlUseCase @Inject constructor(private val repo: ShortenUrlRepo) {
 
-    fun invoke() = repo.getAllStoredUrl().distinctUntilChanged().flowOn(Dispatchers.IO)
+    fun invoke() = repo.getAllStoredUrl().flowOn(Dispatchers.IO)
 
 }
